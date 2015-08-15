@@ -5,6 +5,14 @@ var io = require('socket.io')(http);
 var tweetArray = [];
 var filterArray = ["RT ", "http:", "https:", "has"];
 
+var Twitter = require('node-tweet-stream'),
+    t = new Twitter({
+        consumer_key: '',
+        consumer_secret: '',
+        token: '',
+        token_secret: ''
+    });
+
 app.get('/', function(req, res) {
     res.sendfile('index.html');
 });
@@ -20,14 +28,6 @@ io.on('connection', function(socket) {
     });
 });
 
-var Twitter = require('node-tweet-stream'),
-    t = new Twitter({
-        consumer_key: '',
-        consumer_secret: '',
-        token: '',
-        token_secret: ''
-    })
-
 t.on('tweet', function(tweet) {
     filter(tweet, tweetArray, filterArray, 0);
 })
@@ -36,7 +36,22 @@ t.on('error', function(err) {
     io.emit("ohnoes");
 })
 
-t.track(' af')
+t.track('on fleek')
+
+// filter out tweets containing strings from filterArray
+function filter(tweet, array, filterArray, index) {
+
+    var containing;
+    for (var i = 0; i < filterArray.length; i++)
+        if (containing = contains(tweet.text, filterArray[i])) break;
+    if (!containing)
+        array.push(tweet);
+}
+
+// can't believe ecmascript is only now about to fix this
+function contains(subject, object) {
+	return subject.search(object) !== -1;
+}
 
 var serveTweet = function() {
     if (tweetArray.length > 0) {
@@ -45,28 +60,13 @@ var serveTweet = function() {
     }
 }
 
-function filter(tweet, array, filterArray, index) {
-
-    var containing = false;
-    for (var i = 0; i < filterArray.length; i++) {
-        if (tweet.text.search(filterArray[i]) !== -1) {
-            containing = true;
-            break;
-        }
-    }
-
-    if (!containing)
-        array.push(tweet);
-}
-
+// temporary embarrassment
 function gc(array) {
 	array = [];
 }
 
-setInterval(serveTweet, 2000);
-
 // just.. ignore for now that we have to garbage collect.
 // pretend we have a fixed size fifo queue that deletes index size+1 objects ;)
-
 // ..seriously, this causes an error "cannot call method 'apply' of undefined" - fix it.
 setInterval(gc(tweetArray), 300000);
+setInterval(serveTweet, 2000);
