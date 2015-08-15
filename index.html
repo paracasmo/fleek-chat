@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font: 13px Helvetica, Arial; }
+    #messages { list-style-type: none; margin: 0; padding: 0; }
+    #messages li { padding: 5px 10px; }
+    #messages li:nth-child(odd) { background: #eee; }
+    </style>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+  </head>
+  <body>
+  <ul id="messages"></ul>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+    var i = 0;
+    socket.on('tweet', function(tweet) {
+      $newLi = $('<li id=li' + i + '>' + tweet + '</li>');
+      $('#messages').append($newLi);
+      $('html, body').animate({ 
+       scrollTop: $(document).height()-$(window).height()}
+      );
+      console.log(tweet);
+    });
+  </script>
+</body>
+</html>
