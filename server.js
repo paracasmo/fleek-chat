@@ -3,9 +3,8 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var config = require('./config');
 
-var tweetArray = [];
-var filterArray = ["RT ", "http:", "https:"];
-
+var tweets = [];
+var filters = config.filters || [];
 var port = config.port || 3000;
 
 var twitter = require('node-tweet-stream'),
@@ -32,7 +31,7 @@ io.on('connection', function (socket) {
 });
 
 t.on('tweet', function (tweet) {
-  filter(tweet, tweetArray, filterArray);
+  filter(tweet, tweets, filters);
 })
 
 t.on('error', function (err) {
@@ -41,14 +40,19 @@ t.on('error', function (err) {
 
 t.track(process.argv[2] || 'fleek');
 
-// filter out tweets containing strings from filterArray
-function filter(tweet, array, filterArray) {
+// filter out tweets containing strings from filters
+function filter(tweet, tweets, filters) {
 
-  var containing;
-  for (var i = 0; i < filterArray.length; i++)
-    if (containing = contains(tweet.text, filterArray[i])) break;
+  var containing = false;
+  for (var i = 0; i < filters.length; i++) {
+    if (contains(tweet.text, filters[i])) {
+      containing = true;
+      break;
+    }
+  }
+
   if (!containing)
-    array.push(tweet);
+    tweets.push(tweet);
 }
 
 // can't believe ecmascript is only now about to fix this
@@ -57,9 +61,9 @@ function contains(subject, object) {
 }
 
 var serveTweet = function () {
-  if (tweetArray.length > 0) {
-    var tweet = tweetArray.splice(Math.floor(Math.random() * tweetArray.length), 1);
-    io.emit('tweet', tweet[0].user.screen_name + ": " + tweet[0].text);
+  if (tweets.length > 0) {
+    var tweet = tweets.splice(Math.floor(Math.random() * tweets.length), 1)[0];
+    io.emit('tweet', tweet.user.screen_name + ": " + tweet.text);
   }
 }
 
@@ -71,5 +75,5 @@ function gc(array) {
 // just.. ignore for now that we have to garbage collect.
 // pretend we have a fixed size fifo queue that deletes index size+1 objects ;)
 // ..seriously, this causes an error "cannot call method 'apply' of undefined" - fix it.
-setInterval(gc(tweetArray), config.gcTimer);
+setInterval(gc(tweets), config.gcTimer);
 setInterval(serveTweet, config.tweetDelay);

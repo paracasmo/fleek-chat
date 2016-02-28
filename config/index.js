@@ -7,7 +7,8 @@ var config = {
   },
   port: 3000,
   gcTimer: 300000,
-  tweetDelay: 2000
+  tweetDelay: 2000,
+  filters: ["RT ", "http:", "https:"]
 }
 
 module.exports = config;
