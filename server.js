@@ -1,16 +1,16 @@
 var app = require('express')();
-var http = require('http').Server(app);
+var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
 var tweetArray = [];
-var filterArray = ["RT ", "http:", "https:", "has"];
+var filterArray = ["rt ", "http:", "https:", "has"];
 
-var Twitter = require('node-tweet-stream'),
-    t = new Twitter({
-        consumer_key: '',
-        consumer_secret: '',
-        token: '',
-        token_secret: ''
+var twitter = require('node-tweet-stream'),
+    t = new twitter({
+        consumer_key: 'guHlvHAlAdTZzRHzygIwXlLXa',
+        consumer_secret: '1OmR6CnIcxg7mUw8tgg6167tdBaLVtdnLI9OZLyp7W4wdmGbc8',
+        token: '15765133-oJ8FN5J51GPJ58RVbzaMfbIbEDqFPoJzTMnGngL68',
+        token_secret: 'C9ZawIKsXecm5iGvjLHfQfJbe0Y5FZhfLUbjfooeP3wDD'
     });
 
 app.get('/', function(req, res) {
@@ -36,7 +36,7 @@ t.on('error', function(err) {
     io.emit("ohnoes");
 })
 
-t.track('on fleek')
+t.track('dumm')
 
 // filter out tweets containing strings from filterArray
 function filter(tweet, array, filterArray, index) {
