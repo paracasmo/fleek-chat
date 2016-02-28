@@ -1,6 +1,6 @@
 {
   "name": "fleek-chat",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "When two entities born and raised on Twitter collide",
   "main": "server.js",
   "scripts": {

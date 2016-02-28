@@ -1,3 +1,14 @@
+#Usage
+install
+``` js
+npm install
+```
+
+usage
+```js
+ node server.js <trackingString>
+```
+
 # Idea Outline
 -(Anthropomorph) Twitter convo -> two entities (pixel bunnies?) that chat to each other about topics picked at random. (gf proposes sloth, wholeheartedly agree)
 -They draw their utterances from the twitter api and use speech synthesis in Chrome to actually talk. 
@@ -13,9 +24,6 @@
 - chrome
 - html5/js/css8
 - mspaint for bunnies :3
-
-# Name ideas
-- fleek-chat (always on point.. not)
 
 # Ideas
 - make behavior plugin-able
