@@ -4,7 +4,10 @@ var config = {
     consumer_secret: '',
     token: '',
     token_secret: ''
-  }
+  },
+  port: 3000,
+  gcTimer: 300000,
+  tweetDelay: 2000
 }
 
 module.exports = config;
