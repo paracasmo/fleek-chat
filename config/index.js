@@ -8,6 +8,7 @@ var config = {
   },
   port: 3000,
   tweetDelay: 2000,
+  languages: ['en', 'de'],
   filters: initFilters()
 }
 

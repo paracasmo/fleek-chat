@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var path = require('path');
 var config = require('./config');
 
 var tweets = [];
@@ -16,7 +17,7 @@ var twitter = require('node-tweet-stream'),
   });
 
 app.get('/', function (req, res) {
-  res.sendfile('index.html');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 http.listen(config.port, function () {
@@ -32,13 +33,17 @@ io.on('connection', function (socket) {
 
 t.on('tweet', function (tweet) {
   filter(tweet, tweets, filters);
-})
+});
 
 t.on('error', function (err) {
   io.emit("ohnoes");
-})
+});
 
-t.track(process.argv[2] || 'fleek');
+t.track(process.argv.slice(2) || 'fleek');
+console.log('Keywords:', t.tracking());
+
+t.language(config.languages);
+console.log('Languages:', t.languages());
 
 // filter out tweets containing strings from filters
 function filter(tweet, tweets, filters) {
