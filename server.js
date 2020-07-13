@@ -43,9 +43,11 @@ t.track(process.argv[2] || 'fleek');
 // filter out tweets containing strings from filters
 function filter(tweet, tweets, filters) {
 
+  var tweetText = getTetweetText(tweet);
+
   var containing = false;
   for (var i = 0; i < filters.length; i++) {
-    if (contains(tweet.text, filters[i])) {
+    if (contains(tweetText, filters[i])) {
       containing = true;
       break;
     }
@@ -63,17 +65,16 @@ function contains(subject, object) {
 var serveTweet = function () {
   if (tweets.length > 0) {
     var tweet = tweets.splice(Math.floor(Math.random() * tweets.length), 1)[0];
-    io.emit('tweet', tweet.user.screen_name + ": " + tweet.text);
+    io.emit('tweet', tweet.user.screen_name + ": " + getTetweetText(tweet));
   }
 }
 
-// temporary embarrassment
-function gc(array) {
-  array = [];
+function getTetweetText(tweet) {
+  if(tweet && tweet.truncated) {
+    return tweet.extended_tweet.full_text;
+  } else {
+    return tweet.text;
+  }
 }
 
-// just.. ignore for now that we have to garbage collect.
-// pretend we have a fixed size fifo queue that deletes index size+1 objects ;)
-// ..seriously, this causes an error "cannot call method 'apply' of undefined" - fix it.
-setInterval(gc(tweets), config.gcTimer);
 setInterval(serveTweet, config.tweetDelay);
