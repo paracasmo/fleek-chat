@@ -6,27 +6,28 @@ const app = require('express')(),
   config = require('./config'),
   twitter = require('node-tweet-stream')
 
-// consts
+
+// configure http app stuff
+const port = config.port || 3000
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')))
+http.listen(port, () => console.log('listening on *:' + port))
+
+// configure twitter
 const t = new twitter({
   consumer_key: config.twitter.consumer_key,
   consumer_secret: config.twitter.consumer_secret,
   token: config.twitter.token,
   token_secret: config.twitter.token_secret
 }),
-  tweets = [],
   filters = config.filters || [],
-  port = config.port || 3000
+  tweets = []
 
-// configure http app stuff
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')))
-http.listen(config.port, () => console.log('listening on *:' + port))
-
-// configure twitter
 t.track(process.argv.slice(2) || 'fleek')
 t.language(config.languages)
 t.on('tweet', tweet => addTweet(tweet))
 t.on('error', err => io.emit('ohnoes'))
 
+// helpers
 const addTweet = tweet => {
   const tweetText = getTetweetText(tweet)
   if (!filters.find(f => tweetText.includes(f))) {
