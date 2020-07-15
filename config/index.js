@@ -1,25 +1,25 @@
-var fs = require('fs');
-var config = {
-  twitter: {
-    consumer_key: '',
-    consumer_secret: '',
-    token: '',
-    token_secret: ''
+const fs = require('fs'),
+  config = {
+    twitter: {
+      consumer_key: '',
+      consumer_secret: '',
+      token: '',
+      token_secret: ''
+    },
+    port: 3000,
+    tweetDelay: 2000,
+    languages: ['en', 'de'],
+    filters: initFilters()
   },
-  port: 3000,
-  tweetDelay: 2000,
-  languages: ['en', 'de'],
-  filters: initFilters()
-}
+  filterListPath = './config/filterlist.txt'
 
 function initFilters() {
-  const filterListPath = './config/filterlist.txt';
   try {
-    fs.access(filterListPath, fs.constants.F_OK);
-    return fs.readFileSync(filterListPath, 'utf8').split('\r\n');
+    fs.access(filterListPath, fs.constants.F_OK)
+    return fs.readFileSync(filterListPath, 'utf8').split('\r\n')
   } catch (err) {
-    return ["RT ", "http:", "https:"];
+    return ['RT ', 'http:', 'https:']
   }
 }
 
-module.exports = config;
+module.exports = config

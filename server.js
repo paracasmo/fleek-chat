@@ -14,7 +14,7 @@ const t = new twitter({
   token_secret: config.twitter.token_secret
 }),
   tweets = [],
-  filters = config.filters.map((i) => i.toLowerCase()) || [],
+  filters = config.filters || [],
   port = config.port || 3000
 
 // configure http app stuff
@@ -32,7 +32,7 @@ t.on('tweet', tweet => addTweet(tweet))
 t.on('error', err => io.emit('ohnoes'))
 
 const addTweet = tweet => {
-  if (filters.filter(f => !getTetweetText(tweet).includes(f)))
+  if (filters.filter(f => getTetweetText(tweet).includes(f)).length === 0)
     tweets.push(tweet)
 }
 
