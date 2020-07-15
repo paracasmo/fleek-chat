@@ -20,10 +20,6 @@ const t = new twitter({
 // configure http app stuff
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')))
 http.listen(config.port, () => console.log('listening on *:' + port))
-io.on('connection', socket => {
-  console.log('user connected')
-  socket.on('disconnect', () => console.log('user disconnected'))
-})
 
 // configure twitter
 t.track(process.argv.slice(2) || 'fleek')
@@ -32,8 +28,10 @@ t.on('tweet', tweet => addTweet(tweet))
 t.on('error', err => io.emit('ohnoes'))
 
 const addTweet = tweet => {
-  if (filters.filter(f => getTetweetText(tweet).includes(f)).length === 0)
+  const tweetText = getTetweetText(tweet)
+  if (!filters.find(f => tweetText.includes(f))) {
     tweets.push(tweet)
+  }
 }
 
 const serveTweet = () => {
